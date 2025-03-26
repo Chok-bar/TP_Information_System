@@ -16,3 +16,6 @@
 [submodule "serveur_tcp"]
 	path = serveur_tcp
 	url = https://github.com/Chok-bar/serveur_TCP
+[submodule "client_tcp_tkinter"]
+	path = client_tcp_tkinter
+	url = https://github.com/Chok-bar/client_TCP_tkinter

@@ -8,6 +8,7 @@
         "serveur_tcp": "server",
         "client_http_cli": "client",
         "client_http_tkinter": "client",
+        "client_tcp_tkinter": "client",
         "moteur_jeu": "core",
         "moteur_admin": "admin",
     }
