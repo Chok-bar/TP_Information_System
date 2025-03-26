@@ -1,0 +1,14 @@
+{
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.typeCheckingMode": "standard",
+    "editor.formatOnPaste": true,
+    "editor.formatOnSave": true,
+    "material-icon-theme.folders.associations": {
+        "serveur_http": "server",
+        "serveur_tcp": "server",
+        "client_http_cli": "client",
+        "client_http_tkinter": "client",
+        "moteur_jeu": "core",
+        "moteur_admin": "admin",
+    }
+}

@@ -1,0 +1,18 @@
+[submodule "moteur_admin"]
+	path = moteur_admin
+	url = https://github.com/Chok-bar/moteur_admin
+[submodule "moteur_jeu"]
+	path = moteur_jeu
+	url = https://github.com/Chok-bar/moteur_jeu
+[submodule "serveur_http"]
+	path = serveur_http
+	url = https://github.com/Chok-bar/serveur_HTTP
+[submodule "client_http_cli"]
+	path = client_http_cli
+	url = https://github.com/Chok-bar/client_HTTP_CLI
+[submodule "client_http_tkinter"]
+	path = client_http_tkinter
+	url = https://github.com/Chok-bar/client_HTTP_tkinter
+[submodule "serveur_tcp"]
+	path = serveur_tcp
+	url = https://github.com/Chok-bar/serveur_TCP

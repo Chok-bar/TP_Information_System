@@ -1,0 +1,19 @@
+---
+name: TP_Information_System
+services:
+  db:
+    image: postgres:17.4-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: tp_info
+  server_http:
+    build:
+      context: ./serveur_http
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    develop:
+      watch:
+        - action: rebuild
+          path: ./serveur_http
