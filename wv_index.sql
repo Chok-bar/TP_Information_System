@@ -39,6 +39,6 @@ alter table players_play (
 	ALTER COLUMN target_position_row int,
 
 	FOREIGN KEY id_player REFERENCES players(id_player),
-	FOREIGN KEY id_turn REFERENCES turns(id_turn),
+	FOREIGN KEY id_turn REFERENCES turns(id_turn)
 );
 
