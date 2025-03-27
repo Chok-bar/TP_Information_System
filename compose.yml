@@ -8,6 +8,17 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: tp_info
+    volumes:
+      - ./db.d/:/docker-entrypoint-initdb.d/
+  moteur_jeu:
+    build:
+      context: ./moteur_jeu
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    develop:
+      watch:
+        - action: rebuild
+          path: ./moteur_jeu
   server_http:
     build:
       context: ./serveur_http
@@ -17,3 +28,12 @@ services:
       watch:
         - action: rebuild
           path: ./serveur_http
+  server_tcp:
+    build:
+      context: ./serveur_tcp
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    develop:
+      watch:
+        - action: rebuild
+          path: ./serveur_tcp
