@@ -8,6 +8,8 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: tp_info
+    volumes:
+      - ./db.d/:/docker-entrypoint-initdb.d/
   moteur_jeu:
     build:
       context: ./moteur_jeu
