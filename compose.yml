@@ -15,6 +15,8 @@ services:
       context: ./moteur_jeu
       dockerfile: Dockerfile
     restart: unless-stopped
+    expose:
+      - "9990"
     develop:
       watch:
         - action: rebuild
@@ -24,6 +26,12 @@ services:
       context: ./serveur_http
       dockerfile: Dockerfile
     restart: unless-stopped
+    depends_on:
+      - moteur_jeu
+    environment:
+      TP_GAME_SERVER_ADDRESS: moteur_jeu
+    ports:
+      - "9999:9999"
     develop:
       watch:
         - action: rebuild
@@ -33,6 +41,12 @@ services:
       context: ./serveur_tcp
       dockerfile: Dockerfile
     restart: unless-stopped
+    depends_on:
+      - moteur_jeu
+    environment:
+      TP_GAME_SERVER_ADDRESS: moteur_jeu
+    ports:
+      - "9999:9999"
     develop:
       watch:
         - action: rebuild
