@@ -1,2 +1,2 @@
-\i /docker-entrypoint-initdb.d/wv_schema.sql
-\i /docker-entrypoint-initdb.d/wv_index.sql
+\i /docker-entrypoint-initdb.d/src/wv_schema.sql
+\i /docker-entrypoint-initdb.d/src/wv_index.sql

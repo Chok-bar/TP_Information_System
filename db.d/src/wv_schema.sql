@@ -23,15 +23,15 @@ create table players_in_parties (
 create table turns (
     id_turn int,
     id_party int,
-    start_time datetime,
-    end_time datetime
+    start_time timestamp,
+    end_time timestamp
 );
 
 create table players_play (
     id_player int,
     id_turn int,
-    start_time datetime,
-    end_time datetime,
+    start_time timestamp,
+    end_time timestamp,
     action varchar(10),
     origin_position_col text,
     origin_position_row text,
