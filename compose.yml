@@ -46,7 +46,7 @@ services:
     environment:
       TP_GAME_SERVER_ADDRESS: moteur_jeu
     ports:
-      - "9999:9999"
+      - "9998:9999"
     develop:
       watch:
         - action: rebuild
