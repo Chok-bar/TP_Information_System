@@ -35,3 +35,50 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON v_players_in_parties TO PUBLIC;
 GRANT SELECT, INSERT, UPDATE, DELETE ON v_turns TO PUBLIC;
 GRANT SELECT, INSERT, UPDATE, DELETE ON v_players_play TO PUBLIC;
 
+-- extra views :
+CREATE VIEW ALL_PLAYERS AS
+	SELECT 
+	    p.pseudo,
+	    COUNT(DISTINCT pip.id_party),
+	    COUNT(DISTINCT pp.id_turn),
+	    MIN(tp.start_time),
+	    MAX(pp.end_time)
+	FROM players p
+	JOIN players_in_parties pip ON pip.id_player = p.id_player
+	JOIN parties pr ON pr.id_party = pip.id_party
+	JOIN players_play pp ON pp.id_player = p.id_player
+	JOIN turns tp ON tp.id_turn = pp.id_turn
+	GROUP BY p.pseudo
+ORDER BY nombre_parties DESC, premiere_participation, derniere_action, p.pseudo;
+
+CREATE VIEW ALL_PLAYERS_ELAPSED_GAME AS
+	SELECT 
+	    p.pseudo,
+	    pr.title_party,
+	    COUNT(DISTINCT pip.id_player),
+	    MIN(pp.end_time),
+	    MAX(pp.end_time),
+	    EXTRACT(EPOCH FROM (MAX(pp.end_time) - MIN(pp.start_time))) AS time_in_game
+	FROM players p
+	JOIN players_in_parties pip ON pip.id_player = p.id_player
+	JOIN parties pr ON pr.id_party = pip.id_party
+	JOIN players_play pp ON pp.id_player = p.id_player
+	JOIN turns tp ON tp.id_turn = pp.id_turn
+GROUP BY p.id_player, pr.id_party;
+
+CREATE VIEW ALL_PLAYERS_ELAPSED_TOUR AS
+	SELECT 
+	    p.pseudo,
+	    pr.title_party,
+	    tp.id_turn,
+	    tp.start_time,
+	    pp.end_time,
+	    EXTRACT(EPOCH FROM (pp.end_time - tp.start_time)) AS decision_time
+	FROM players p
+	JOIN players_in_parties pip ON pip.id_player = p.id_player
+	JOIN parties pr ON pr.id_party = pip.id_party
+	JOIN players_play pp ON pp.id_player = p.id_player
+	JOIN turns tp ON tp.id_turn = pp.id_turn
+ORDER BY p.pseudo, pr.title_party, tp.id_turn;
+
+
