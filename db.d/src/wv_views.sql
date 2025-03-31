@@ -39,17 +39,17 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON v_players_play TO PUBLIC;
 CREATE VIEW ALL_PLAYERS AS
 	SELECT 
 	    p.pseudo,
-	    COUNT(DISTINCT pip.id_party),
-	    COUNT(DISTINCT pp.id_turn),
-	    MIN(tp.start_time),
-	    MAX(pp.end_time)
+	    COUNT(DISTINCT pip.id_party) as nb_parties,
+	    COUNT(DISTINCT pp.id_turn)as nb_turns,
+	    MIN(tp.start_time) as first_action,
+	    MAX(pp.end_time) as last_action
 	FROM players p
 	JOIN players_in_parties pip ON pip.id_player = p.id_player
 	JOIN parties pr ON pr.id_party = pip.id_party
 	JOIN players_play pp ON pp.id_player = p.id_player
 	JOIN turns tp ON tp.id_turn = pp.id_turn
 	GROUP BY p.pseudo
-ORDER BY nombre_parties DESC, premiere_participation, derniere_action, p.pseudo;
+ORDER BY nb_parties DESC, first_action, last_action, p.pseudo;
 
 CREATE VIEW ALL_PLAYERS_ELAPSED_GAME AS
 	SELECT 

@@ -22,17 +22,16 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-
 CREATE OR REPLACE FUNCTION random_role(party_id INT) 
 RETURNS INT AS $$
 DECLARE
-    max_wolves INT := (select max_wolves from parties where id_party = party_id);
-    max_villagers INT := (select max_villagers from parties where id_party = party_id);
+    max_wolves INT := (SELECT max_wolves FROM parties WHERE id_party = party_id);
+    max_villagers INT := (SELECT max_villagers FROM parties WHERE id_party = party_id);
     current_wolves INT;
     current_villagers INT;
     new_role INT;
-	id_wolf_role INT := (select id_role from roles where description_role == 'loup');
-	id_villager_role INT := (select id_role from roles where description_role == 'villageois');
+    id_wolf_role INT := (SELECT id_role FROM roles WHERE description_role = 'loup');
+    id_villager_role INT := (SELECT id_role FROM roles WHERE description_role = 'villageois');
 BEGIN
     SELECT COUNT(1) INTO current_wolves
     FROM players_in_parties
@@ -42,13 +41,13 @@ BEGIN
     FROM players_in_parties
     WHERE id_party = party_id AND id_role = id_villager_role;
 
-	CASE
-		WHEN current_wolves + current_villagers = (select max_players from parties where id_party = party_id)
-		THEN new_role := 0
-		WHEN current_wolves / max_wolves > current_villagers / max_villagers
-		THEN new_role := id_villager_role
-		ELSE new_role := id_wolf_role		
-    END
+    IF (current_wolves + current_villagers) = (SELECT max_players FROM parties WHERE id_party = party_id) THEN
+        new_role := 0;
+    ELSIF (current_wolves::FLOAT / max_wolves) > (current_villagers::FLOAT / max_villagers) THEN
+        new_role := id_villager_role;
+    ELSE
+        new_role := id_wolf_role;
+    END IF;
 
     RETURN new_role;
 END;
@@ -64,39 +63,42 @@ RETURNS TABLE (
     avg_decision_time INTERVAL
 ) AS $$
 DECLARE
-	id_wolf_role INT := (select id_role from roles where description_role == 'loup');
-	id_villager_role INT := (select id_role from roles where description_role == 'villageois');
+    id_wolf_role INT := (SELECT id_role FROM roles WHERE description_role = 'loup');
+    id_villager_role INT := (SELECT id_role FROM roles WHERE description_role = 'villageois');
+    winning_team INT;
 BEGIN
-	
-	DECLARE total_turns INT;
-    SELECT COUNT(*) INTO total_turns
-    FROM turns
-    WHERE id_party = party_id;
+    -- Get total number of turns
+    total_turns := (SELECT COUNT(*) FROM turns WHERE id_party = party_id);
 
-	DECLARE winning_team INT;
-	CASE
-		WHEN (NOT EXISTS (
-			select (1) from players_in_parties where id_party = party_id and is_alive = TRUE and id_role = id_villager_role
-		)
-		THEN winning_team := id_wolf_role;
-		ELSE winning_team := id_villager_role;
-	END
+    -- Determine winning team
+    winning_team := CASE
+        WHEN NOT EXISTS (
+            SELECT 1 FROM players_in_parties WHERE id_party = party_id AND is_alive = TRUE AND id_role = id_villager_role
+        )
+        THEN id_wolf_role
+        ELSE id_villager_role
+    END;
 
-	DECLARE names_and_times TABLE;
-	names_and_times := (select p.pseudo, avg(pp.start_time - pp.end_time) from players p
-		join players_in_parties pip on p.id_player = pip.id_player
-		join players_play pp on p.id_player = pp.id_player
-		join turns t on t.id_turn = pp.id_turn
-		join parties pt on t.id_party = pt.id_party
-		where id_role = winning_team and is_alive = TRUE and id_party = party_id
-		group by p.id_player
-	);
-
-	DECLARE party_name text := (select title_party from parties where id_party = party_id);
-
+    -- Fetch all winners and return them
     RETURN QUERY 
-    SELECT (select 1 from names_and_times), winning_team, party_name, total_turns total_turns, (select 2 from names_and_times);
-	-- total turns is always equal to an individual’s turns played
+    SELECT 
+        p.pseudo AS player_name, 
+        CASE WHEN pip.id_role = id_wolf_role THEN 'loup' ELSE 'villageois' END AS role_name, 
+        pt.title_party AS party_name, 
+        COUNT(t.id_turn) AS player_turns, 
+        total_turns, 
+        AVG(pp.start_time - pp.end_time) AS avg_decision_time
+    FROM players p
+    JOIN players_in_parties pip ON p.id_player = pip.id_player
+    JOIN players_play pp ON p.id_player = pp.id_player
+    JOIN turns t ON t.id_turn = pp.id_turn
+    JOIN parties pt ON t.id_party = pt.id_party
+    WHERE pip.id_role = winning_team 
+      AND pip.is_alive = TRUE 
+      AND pip.id_party = party_id
+    GROUP BY p.pseudo, pip.id_role, pt.title_party;
+
 END;
 $$ LANGUAGE plpgsql;
+
 
