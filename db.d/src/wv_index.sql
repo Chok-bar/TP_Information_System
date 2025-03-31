@@ -14,7 +14,7 @@ CREATE TYPE actions AS ENUM (
 
 create table parties (
     id_party SERIAL PRIMARY KEY,
-    title_party text
+    title_party text,
 	grid_x INT,
 	grid_y INT,
 	max_decision_time INT,
