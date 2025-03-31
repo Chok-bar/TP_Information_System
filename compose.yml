@@ -5,22 +5,33 @@ services:
     image: postgres:17.4-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
       POSTGRES_DB: tp_info
     volumes:
       - ./db.d/:/docker-entrypoint-initdb.d/
+    ports:
+      - "5432:5432"  
+
   moteur_jeu:
     build:
       context: ./moteur_jeu
       dockerfile: Dockerfile
     restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_NAME: tp_info
+      DB_USER: postgres
+      DB_PASSWORD: postgres
     expose:
       - "9990"
     develop:
       watch:
         - action: rebuild
           path: ./moteur_jeu
+
   server_http:
     build:
       context: ./serveur_http
@@ -36,6 +47,7 @@ services:
       watch:
         - action: rebuild
           path: ./serveur_http
+
   server_tcp:
     build:
       context: ./serveur_tcp
