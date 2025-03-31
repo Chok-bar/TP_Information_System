@@ -17,7 +17,7 @@ create table parties (
     title_party text,
 	grid_x INT,
 	grid_y INT,
-	max_decision_time INT,
+	max_decision_time INTERVAL,
 	max_turns INT,
 	obstacles_count INT,
 	max_players INT,
