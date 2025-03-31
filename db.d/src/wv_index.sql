@@ -15,6 +15,14 @@ CREATE TYPE actions AS ENUM (
 create table parties (
     id_party SERIAL PRIMARY KEY,
     title_party text
+	grid_x INT,
+	grid_y INT,
+	max_decision_time INT,
+	max_turns INT,
+	obstacles_count INT,
+	max_players INT,
+	max_wolves INT,
+	max_villagers INT
 );
 
 create table roles (
